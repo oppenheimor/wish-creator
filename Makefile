@@ -16,4 +16,3 @@ test-backend:
 
 test-frontend:
 	cd frontend && npm ci && npm test && npm run build && npm run lint
-

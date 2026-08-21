@@ -54,8 +54,10 @@ export default function App() {
     try {
       const created = await createTodo(title)
       setTodos((current) => [created, ...current])
+      return true
     } catch (reason) {
       setError(errorMessage(reason))
+      return false
     } finally {
       setIsCreating(false)
     }
@@ -67,8 +69,10 @@ export default function App() {
     try {
       const updated = await updateTodo(nextTodo)
       setTodos((current) => current.map((todo) => todo.id === updated.id ? updated : todo))
+      return true
     } catch (reason) {
       setError(errorMessage(reason))
+      return false
     } finally {
       setBusy(nextTodo.id, false)
     }
@@ -82,6 +86,7 @@ export default function App() {
       setTodos((current) => current.filter((item) => item.id !== todo.id))
     } catch (reason) {
       setError(errorMessage(reason))
+    } finally {
       setBusy(todo.id, false)
     }
   }

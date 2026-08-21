@@ -6,7 +6,7 @@ interface TodoItemProps {
   todo: Todo
   busy: boolean
   onDelete: (todo: Todo) => Promise<void>
-  onUpdate: (todo: Todo) => Promise<void>
+  onUpdate: (todo: Todo) => Promise<boolean>
 }
 
 export function TodoItem({ todo, busy, onDelete, onUpdate }: TodoItemProps) {
@@ -18,8 +18,9 @@ export function TodoItem({ todo, busy, onDelete, onUpdate }: TodoItemProps) {
     const nextTitle = draft.trim()
     if (!nextTitle) return
 
-    await onUpdate({ ...todo, title: nextTitle })
-    setIsEditing(false)
+    if (await onUpdate({ ...todo, title: nextTitle })) {
+      setIsEditing(false)
+    }
   }
 
   function cancelEditing() {

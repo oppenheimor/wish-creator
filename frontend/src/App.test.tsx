@@ -59,6 +59,32 @@ test('user can create, complete, edit, and delete todos', async () => {
   expect(fetchMock).toHaveBeenNthCalledWith(5, `/api/todos/${existingTodo.id}`, expect.objectContaining({ method: 'DELETE' }))
 })
 
+test('failed creates and edits keep the user draft available', async () => {
+  vi.spyOn(globalThis, 'fetch')
+    .mockResolvedValueOnce(jsonResponse([existingTodo]))
+    .mockResolvedValueOnce(jsonResponse({ detail: 'Create unavailable' }, 503))
+    .mockResolvedValueOnce(jsonResponse({ detail: 'Update unavailable' }, 503))
+
+  const user = userEvent.setup()
+  render(<App />)
+
+  expect(await screen.findByText(existingTodo.title)).toBeInTheDocument()
+
+  const newTaskInput = screen.getByLabelText('New task')
+  await user.type(newTaskInput, 'Do not lose this idea')
+  await user.click(screen.getByRole('button', { name: 'Add task' }))
+  expect(await screen.findByText('Create unavailable')).toBeInTheDocument()
+  expect(newTaskInput).toHaveValue('Do not lose this idea')
+
+  await user.click(screen.getByRole('button', { name: `Edit ${existingTodo.title}` }))
+  const editInput = screen.getByLabelText('Edit task')
+  await user.clear(editInput)
+  await user.type(editInput, 'Keep this revised idea')
+  await user.click(screen.getByRole('button', { name: 'Save changes' }))
+  expect(await screen.findByText('Update unavailable')).toBeInTheDocument()
+  expect(editInput).toHaveValue('Keep this revised idea')
+})
+
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,

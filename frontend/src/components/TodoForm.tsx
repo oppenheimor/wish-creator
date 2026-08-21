@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 
 interface TodoFormProps {
   isSubmitting: boolean
-  onAdd: (title: string) => Promise<void>
+  onAdd: (title: string) => Promise<boolean>
 }
 
 export function TodoForm({ isSubmitting, onAdd }: TodoFormProps) {
@@ -13,8 +13,9 @@ export function TodoForm({ isSubmitting, onAdd }: TodoFormProps) {
     const nextTitle = title.trim()
     if (!nextTitle) return
 
-    await onAdd(nextTitle)
-    setTitle('')
+    if (await onAdd(nextTitle)) {
+      setTitle('')
+    }
   }
 
   return (
