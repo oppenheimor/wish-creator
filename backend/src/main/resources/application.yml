@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: wish-creator
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/wish_creator}
+    username: ${DATABASE_USERNAME:wish_creator}
+    password: ${DATABASE_PASSWORD:wish_creator}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+server:
+  shutdown: graceful
+
