@@ -47,6 +47,17 @@ npm run dev
 
 Vite 会把 `/api` 请求代理到 `http://localhost:8080`。
 
+### 原型工作台
+
+新增或修改用户可观察功能前，先启动配套原型工作台：
+
+```bash
+cd frontend
+npm run prototype
+```
+
+工作台位于 <http://localhost:5173/prototype>，具体更新顺序和目录约定见 [`docs/prototype-workflow.md`](docs/prototype-workflow.md)。当前工作台保持空状态，等待具体功能需求明确后再登记原型，不预设产品行为。
+
 ### 后端
 
 需要 Java 21；先单独启动数据库：
@@ -56,6 +67,8 @@ docker compose up database -d
 cd backend
 ./mvnw spring-boot:run
 ```
+
+后端已接入 Spring Boot DevTools。IDE 自动编译，或在另一个终端执行 `cd backend && ./mvnw compile` 后，DevTools 会检测 classpath 变化并自动重启应用；仅保存 `.java` 文件但没有生成新的 `.class` 文件不会触发重启。
 
 数据库结构由 `backend/src/main/resources/db/migration` 下的 Flyway migration 管理。不要依赖 Hibernate 自动改表，新增字段时应增加新的 migration。
 
@@ -101,7 +114,8 @@ cd frontend && npm test && npm run build && npm run lint
 ```text
 .
 ├── backend/                 # Spring Boot API 与 Flyway migrations
-├── frontend/                # React SPA 与 Nginx 配置
+├── frontend/                # React SPA、测试与开发原型工作台
+├── docs/                    # 产品、开发与原型工作流规范
 ├── .github/workflows/ci.yml # 持续集成
 ├── compose.yml              # 完整本地/单机部署编排
 └── Makefile                 # 常用开发命令
